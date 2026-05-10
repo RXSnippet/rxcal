@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casio FX-82MS Scientific Calculator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page-bg">
+  <div class="calculator" id="calculator">
+    <div class="calc-top-bar">
+      <div class="casio-logo">CASIO</div>
+      <div class="model-name">fx-82MS</div>
+      <div class="top-right-info">
+        <span class="solar-panel"></span>
+        <span class="natural-v">NATURAL-V.P.A.M.</span>
+      </div>
+    </div>
+
+    <div class="display-section">
+      <div class="display-outer">
+        <div class="display-inner" id="display-inner">
+          <div class="display-indicators">
+            <span class="ind" id="ind-shift">S</span>
+            <span class="ind" id="ind-alpha">A</span>
+            <span class="ind" id="ind-mode">M</span>
+            <span class="ind" id="ind-sto">STO</span>
+            <span class="ind" id="ind-rcl">RCL</span>
+            <span class="ind" id="ind-stat">STAT</span>
+            <span class="ind" id="ind-deg" style="opacity:1">D</span>
+            <span class="ind" id="ind-rad">R</span>
+            <span class="ind" id="ind-gra">G</span>
+          </div>
+          <div class="display-expression" id="disp-expr"></div>
+          <div class="display-result" id="disp-result">0</div>
+          <div class="display-startup" id="disp-startup">
+            <span class="startup-text" id="startup-text"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons-area">
+      <!-- Row 0: Mode / Setup -->
+      <div class="btn-row">
+        <button class="btn btn-gray" data-action="mode">
+          <span class="btn-shift-label">CLR</span>
+          <span class="btn-main">MODE</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray" data-action="calc">
+          <span class="btn-shift-label">CMPLX</span>
+          <span class="btn-main">CALC</span>
+          <span class="btn-alpha-label">i</span>
+        </button>
+        <button class="btn btn-gray" data-action="solve">
+          <span class="btn-shift-label">SOLVE</span>
+          <span class="btn-main">∫dx</span>
+          <span class="btn-alpha-label">B</span>
+        </button>
+        <button class="btn btn-gray" data-action="nCr">
+          <span class="btn-shift-label">nPr</span>
+          <span class="btn-main">nCr</span>
+          <span class="btn-alpha-label">C</span>
+        </button>
+        <button class="btn btn-gray" data-action="percent">
+          <span class="btn-shift-label">→r,θ</span>
+          <span class="btn-main">%</span>
+          <span class="btn-alpha-label">D</span>
+        </button>
+      </div>
+
+      <!-- Row 1: x^-1, sqrt, x^2, x^y, log -->
+      <div class="btn-row">
+        <button class="btn btn-gray" data-action="inv">
+          <span class="btn-shift-label">x!</span>
+          <span class="btn-main">x⁻¹</span>
+          <span class="btn-alpha-label">A</span>
+        </button>
+        <button class="btn btn-gray" data-action="sqrt">
+          <span class="btn-shift-label">∛</span>
+          <span class="btn-main">√</span>
+          <span class="btn-alpha-label">B</span>
+        </button>
+        <button class="btn btn-gray" data-action="sq">
+          <span class="btn-shift-label">x³</span>
+          <span class="btn-main">x²</span>
+          <span class="btn-alpha-label">C</span>
+        </button>
+        <button class="btn btn-gray" data-action="pow">
+          <span class="btn-shift-label">ˣ√</span>
+          <span class="btn-main">xʸ</span>
+          <span class="btn-alpha-label">D</span>
+        </button>
+        <button class="btn btn-gray" data-action="log">
+          <span class="btn-shift-label">10ˣ</span>
+          <span class="btn-main">log</span>
+          <span class="btn-alpha-label">E</span>
+        </button>
+      </div>
+
+      <!-- Row 2: sin, cos, tan, STO, RCL -->
+      <div class="btn-row">
+        <button class="btn btn-gray" data-action="sin">
+          <span class="btn-shift-label">sin⁻¹</span>
+          <span class="btn-main">sin</span>
+          <span class="btn-alpha-label">F</span>
+        </button>
+        <button class="btn btn-gray" data-action="cos">
+          <span class="btn-shift-label">cos⁻¹</span>
+          <span class="btn-main">cos</span>
+          <span class="btn-alpha-label">G</span>
+        </button>
+        <button class="btn btn-gray" data-action="tan">
+          <span class="btn-shift-label">tan⁻¹</span>
+          <span class="btn-main">tan</span>
+          <span class="btn-alpha-label">H</span>
+        </button>
+        <button class="btn btn-gray" data-action="sto">
+          <span class="btn-shift-label">RCL</span>
+          <span class="btn-main">STO</span>
+          <span class="btn-alpha-label">X</span>
+        </button>
+        <button class="btn btn-gray" data-action="eng">
+          <span class="btn-shift-label">←ENG</span>
+          <span class="btn-main">ENG</span>
+          <span class="btn-alpha-label">Y</span>
+        </button>
+      </div>
+
+      <!-- Row 3: ( ) , M+ ln -->
+      <div class="btn-row">
+        <button class="btn btn-gray" data-action="openParen">
+          <span class="btn-shift-label">Abs</span>
+          <span class="btn-main">(</span>
+          <span class="btn-alpha-label">{</span>
+        </button>
+        <button class="btn btn-gray" data-action="closeParen">
+          <span class="btn-shift-label">(–)</span>
+          <span class="btn-main">)</span>
+          <span class="btn-alpha-label">}</span>
+        </button>
+        <button class="btn btn-gray" data-action="comma">
+          <span class="btn-shift-label">°' "</span>
+          <span class="btn-main">,</span>
+          <span class="btn-alpha-label">;</span>
+        </button>
+        <button class="btn btn-gray" data-action="mplus">
+          <span class="btn-shift-label">M–</span>
+          <span class="btn-main">M+</span>
+          <span class="btn-alpha-label">M</span>
+        </button>
+        <button class="btn btn-gray" data-action="ln">
+          <span class="btn-shift-label">eˣ</span>
+          <span class="btn-main">ln</span>
+          <span class="btn-alpha-label">e</span>
+        </button>
+      </div>
+
+      <!-- Row 4: 7 8 9 DEL AC -->
+      <div class="btn-row">
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="7">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">7</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="8">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">8</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="9">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">9</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-delete" data-action="del">
+          <span class="btn-shift-label">INS</span>
+          <span class="btn-main">DEL</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-ac" data-action="ac">
+          <span class="btn-shift-label">OFF</span>
+          <span class="btn-main">AC</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+      </div>
+
+      <!-- Row 5: 4 5 6 × ÷ -->
+      <div class="btn-row">
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="4">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">4</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="5">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">5</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="6">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">6</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray btn-op" data-action="op" data-val="×">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">×</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray btn-op" data-action="op" data-val="÷">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">÷</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+      </div>
+
+      <!-- Row 6: 1 2 3 + - -->
+      <div class="btn-row">
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="1">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">1</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="2">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">2</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="3">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">3</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray btn-op" data-action="op" data-val="+">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">+</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray btn-op" data-action="op" data-val="−">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">−</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+      </div>
+
+      <!-- Row 7: 0 . ×10ˣ Ans = -->
+      <div class="btn-row">
+        <button class="btn btn-darkgray btn-num" data-action="digit" data-val="0">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">0</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-darkgray btn-num" data-action="dot">
+          <span class="btn-shift-label"></span>
+          <span class="btn-main">.</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+        <button class="btn btn-gray" data-action="exp10">
+          <span class="btn-shift-label">π</span>
+          <span class="btn-main">×10ˣ</span>
+          <span class="btn-alpha-label">e</span>
+        </button>
+        <button class="btn btn-gray" data-action="ans">
+          <span class="btn-shift-label">DRG►</span>
+          <span class="btn-main">Ans</span>
+          <span class="btn-alpha-label">–</span>
+        </button>
+        <button class="btn btn-equals" data-action="equals">
+          <span class="btn-shift-label">≠</span>
+          <span class="btn-main">=</span>
+          <span class="btn-alpha-label"></span>
+        </button>
+      </div>
+
+      <!-- Bottom special row: SHIFT ALPHA -->
+      <div class="btn-row bottom-special-row">
+        <button class="btn btn-shift" data-action="shift">
+          <span class="btn-main">SHIFT</span>
+        </button>
+        <button class="btn btn-alpha" data-action="alpha">
+          <span class="btn-main">ALPHA</span>
+        </button>
+        <div class="replay-cluster">
+          <button class="btn btn-replay" data-action="up" title="Up">▲</button>
+          <div class="replay-lr">
+            <button class="btn btn-replay" data-action="left" title="Left">◄</button>
+            <button class="btn btn-replay btn-replay-center" data-action="replay">REPLAY</button>
+            <button class="btn btn-replay" data-action="right" title="Right">►</button>
+          </div>
+          <button class="btn btn-replay" data-action="down" title="Down">▼</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-bottom-bar">
+      <div class="calc-model-bottom">fx-82MS</div>
+      <div class="calc-features">2-LINE DISPLAY&nbsp;&nbsp;•&nbsp;&nbsp;240 FUNCTIONS</div>
+    </div>
+  </div>
+</div>
+<script src="calc.js"></script>
+</body>
+</html>

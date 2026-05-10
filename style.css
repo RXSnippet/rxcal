@@ -1,0 +1,590 @@
+:root {
+  --calc-body: #2a2d35;
+  --calc-body-light: #363a45;
+  --calc-body-shadow: #1a1c22;
+  --display-bg: #b8c9a0;
+  --display-border: #0a0a0a;
+  --display-text: #1a2810;
+  --display-dim: #8a9e75;
+  --lcd-off: #a8bb90;
+
+  --btn-gray: #4a4e5c;
+  --btn-gray-hover: #5a5e6c;
+  --btn-gray-shadow: #2a2c35;
+  --btn-darkgray: #2c2f38;
+  --btn-darkgray-hover: #383c48;
+  --btn-shift: #d4820a;
+  --btn-shift-hover: #e09020;
+  --btn-alpha: #2255aa;
+  --btn-alpha-hover: #2a66cc;
+  --btn-ac: #c04020;
+  --btn-ac-hover: #d04828;
+  --btn-del: #5a5060;
+  --btn-del-hover: #6a6070;
+  --btn-equals: #c04020;
+  --btn-equals-hover: #d04828;
+
+  --shift-label-color: #d4820a;
+  --alpha-label-color: #4488ee;
+
+  --font-mono: 'Courier New', monospace;
+  --radius: 4px;
+  --radius-lg: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  background: #1a1c22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-mono);
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.page-bg {
+  background: radial-gradient(ellipse at center, #2a2d35 0%, #1a1c22 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+
+/* ─── CALCULATOR BODY ─── */
+.calculator {
+  width: 320px;
+  background: linear-gradient(160deg, #2f3240 0%, #242730 60%, #1e2028 100%);
+  border-radius: 18px 18px 24px 24px;
+  padding: 16px 14px 14px;
+  box-shadow:
+    0 4px 0 #111316,
+    0 8px 24px rgba(0,0,0,0.7),
+    0 32px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -2px 4px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.calculator::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, transparent 100%);
+  border-radius: 18px 18px 0 0;
+  pointer-events: none;
+}
+
+/* ─── TOP BAR ─── */
+.calc-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.casio-logo {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: #c8cdd8;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.model-name {
+  font-size: 11px;
+  color: #8899bb;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.top-right-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.solar-panel {
+  display: block;
+  width: 36px;
+  height: 12px;
+  background: linear-gradient(to right, #1a2a1a, #2a4a2a, #1a3a1a, #2a4a2a, #1a3a1a);
+  border: 1px solid #0a1a0a;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.natural-v {
+  font-size: 6.5px;
+  color: #7788aa;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ─── DISPLAY ─── */
+.display-section {
+  margin-bottom: 12px;
+}
+
+.display-outer {
+  background: #0a0a0a;
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,0.8),
+    inset 0 -1px 0 rgba(255,255,255,0.04),
+    0 1px 0 rgba(255,255,255,0.05);
+}
+
+.display-inner {
+  background: var(--display-bg);
+  border-radius: 3px;
+  padding: 8px 10px 6px;
+  min-height: 72px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.display-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, transparent 40%);
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+/* Startup overlay */
+.display-startup {
+  position: absolute;
+  inset: 0;
+  background: var(--display-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 3px;
+  transition: opacity 0.5s ease;
+}
+
+.startup-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--display-text);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.display-startup.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Indicators row */
+.display-indicators {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.ind {
+  font-size: 7.5px;
+  color: var(--lcd-off);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: color 0.1s;
+}
+
+.ind.active {
+  color: var(--display-text);
+}
+
+/* Expression line */
+.display-expression {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--display-dim);
+  text-align: right;
+  min-height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  direction: rtl;
+  unicode-bidi: bidi-override;
+  letter-spacing: 0.5px;
+}
+
+.display-expression.active {
+  color: var(--display-text);
+}
+
+/* Result line */
+.display-result {
+  font-family: 'Courier New', monospace;
+  font-size: 26px;
+  color: var(--display-text);
+  text-align: right;
+  font-weight: bold;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-top: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  direction: rtl;
+  unicode-bidi: bidi-override;
+  transition: font-size 0.1s;
+}
+
+.display-result.small { font-size: 18px; }
+.display-result.xsmall { font-size: 14px; }
+
+/* Error state */
+.display-inner.error .display-result {
+  color: #882200;
+  font-size: 16px;
+}
+
+/* ─── BUTTONS AREA ─── */
+.buttons-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+/* ─── BUTTON BASE ─── */
+.btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 2px 4px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  outline: none;
+  font-family: var(--font-mono);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.1s;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+}
+
+.btn-main {
+  font-size: 12px;
+  font-weight: bold;
+  color: #e8eaf0;
+  line-height: 1.2;
+  text-align: center;
+  display: block;
+}
+
+.btn-shift-label {
+  font-size: 7px;
+  color: var(--shift-label-color);
+  min-height: 10px;
+  display: block;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.btn-alpha-label {
+  font-size: 7px;
+  color: var(--alpha-label-color);
+  min-height: 9px;
+  display: block;
+  text-align: center;
+}
+
+/* Gray buttons */
+.btn-gray {
+  background: linear-gradient(to bottom, #525666, #3e4250);
+  box-shadow: 0 3px 0 #202330, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-gray:hover { background: linear-gradient(to bottom, #5c6070, #484c5e); }
+.btn-gray:active, .btn-gray.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #202330, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Dark number buttons */
+.btn-darkgray {
+  background: linear-gradient(to bottom, #363944, #2a2d38);
+  box-shadow: 0 3px 0 #15171e, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-darkgray:hover { background: linear-gradient(to bottom, #42465280, #34374266); }
+.btn-darkgray:active, .btn-darkgray.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #15171e, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn-num .btn-main {
+  font-size: 15px;
+  color: #f0f2f8;
+}
+
+/* Operator buttons */
+.btn-op .btn-main {
+  font-size: 15px;
+  color: #e0e4f0;
+}
+
+/* SHIFT */
+.btn-shift {
+  background: linear-gradient(to bottom, #e09020, #c07010);
+  box-shadow: 0 3px 0 #603a00, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-shift:hover { background: linear-gradient(to bottom, #f0a030, #d08020); }
+.btn-shift:active, .btn-shift.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #603a00, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn-shift .btn-main {
+  font-size: 10px;
+  color: #fff8e0;
+  letter-spacing: 0.5px;
+}
+
+.btn-shift.active-mode {
+  background: linear-gradient(to bottom, #ffcc44, #e0a020);
+  box-shadow: 0 3px 0 #804400, 0 0 10px rgba(255, 180, 0, 0.4), 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* ALPHA */
+.btn-alpha {
+  background: linear-gradient(to bottom, #3366cc, #1a3a99);
+  box-shadow: 0 3px 0 #0a1a55, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-alpha:hover { background: linear-gradient(to bottom, #4477dd, #2244aa); }
+.btn-alpha:active, .btn-alpha.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0a1a55, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn-alpha .btn-main {
+  font-size: 10px;
+  color: #d0e4ff;
+  letter-spacing: 0.5px;
+}
+
+.btn-alpha.active-mode {
+  background: linear-gradient(to bottom, #5599ff, #2255cc);
+  box-shadow: 0 3px 0 #0a1a55, 0 0 10px rgba(80, 140, 255, 0.4), 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* DEL */
+.btn-delete {
+  background: linear-gradient(to bottom, #5a5064, #454050);
+  box-shadow: 0 3px 0 #252030, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-delete:hover { background: linear-gradient(to bottom, #6a6074, #554060); }
+.btn-delete:active, .btn-delete.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #252030, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* AC */
+.btn-ac {
+  background: linear-gradient(to bottom, #cc4422, #a83318);
+  box-shadow: 0 3px 0 #601800, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-ac:hover { background: linear-gradient(to bottom, #dd5533, #bb4422); }
+.btn-ac:active, .btn-ac.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #601800, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn-ac .btn-main, .btn-ac .btn-shift-label { color: #fff; }
+
+/* = */
+.btn-equals {
+  background: linear-gradient(to bottom, #cc4422, #a83318);
+  box-shadow: 0 3px 0 #601800, 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.btn-equals:hover { background: linear-gradient(to bottom, #dd5533, #bb4422); }
+.btn-equals:active, .btn-equals.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #601800, 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn-equals .btn-main { font-size: 18px; color: #fff; }
+
+/* Replay cluster */
+.bottom-special-row {
+  grid-template-columns: 1fr 1fr 2fr;
+  align-items: start;
+}
+
+.replay-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.replay-lr {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.btn-replay {
+  background: linear-gradient(to bottom, #444858, #363a48);
+  box-shadow: 0 2px 0 #1e2028, 0 2px 4px rgba(0,0,0,0.4);
+  padding: 4px 6px;
+  font-size: 8px;
+  color: #a0a8c0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: transform 0.06s, box-shadow 0.06s;
+  min-width: 20px;
+  font-family: var(--font-mono);
+}
+
+.btn-replay-center {
+  font-size: 6px;
+  padding: 4px 3px;
+  min-width: 36px;
+  letter-spacing: 0.3px;
+  color: #8090b0;
+}
+
+.btn-replay:hover { background: linear-gradient(to bottom, #545868, #424658); }
+.btn-replay:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #1e2028;
+}
+
+/* ─── BOTTOM BAR ─── */
+.calc-bottom-bar {
+  margin-top: 10px;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.calc-model-bottom {
+  font-size: 9px;
+  color: #5a6080;
+  letter-spacing: 2px;
+  margin-bottom: 2px;
+}
+
+.calc-features {
+  font-size: 7px;
+  color: #404560;
+  letter-spacing: 1px;
+}
+
+/* ─── SHIFT MODE HIGHLIGHT ─── */
+.shift-mode .btn-shift-label { opacity: 1; color: #ffaa22; }
+.alpha-mode .btn-alpha-label { opacity: 1; color: #66aaff; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 380px) {
+  .calculator {
+    width: 290px;
+    padding: 12px 10px 10px;
+  }
+  .btn-main { font-size: 11px; }
+  .btn-num .btn-main, .btn-op .btn-main { font-size: 13px; }
+  .btn-equals .btn-main { font-size: 16px; }
+  .display-result { font-size: 22px; }
+  .casio-logo { font-size: 15px; }
+}
+
+@media (min-width: 500px) {
+  .calculator {
+    width: 360px;
+  }
+  .btn-main { font-size: 13px; }
+  .btn-num .btn-main, .btn-op .btn-main { font-size: 17px; }
+  .display-result { font-size: 30px; }
+}
+
+/* ─── SHAKE ANIMATION ─── */
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+
+.display-inner.shake { animation: shake 0.4s ease; }
+
+/* ─── RIPPLE ─── */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255,255,255,0);
+  transition: background 0.3s;
+}
+
+.btn:active::after {
+  background: rgba(255,255,255,0.08);
+}
+
+/* ─── POWER OFF OVERLAY ─── */
+.calc-off-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  border-radius: 18px 18px 24px 24px;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.calc-off-overlay.visible {
+  display: flex;
+}
+
+/* Cursor blink */
+@keyframes blink {
+  0%,100%{opacity:1}
+  50%{opacity:0}
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--display-text);
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
