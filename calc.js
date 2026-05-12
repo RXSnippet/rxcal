@@ -16,6 +16,7 @@ const state = {
   histIdx: -1,
   isOff: false,
   inError: false,
+  autoCloseCount: 0,
 };
 
 /* ──────────────────────────────────────
@@ -68,6 +69,10 @@ function updateDisplay() {
 
   const res = state.result;
   dispResult.textContent = res;
+  requestAnimationFrame(() => {
+    dispExpr.scrollLeft = dispExpr.scrollWidth;
+    dispResult.scrollLeft = dispResult.scrollWidth;
+  });
   const len = res.length;
   dispResult.classList.remove('small', 'xsmall');
   if (len > 14) dispResult.classList.add('xsmall');
@@ -90,7 +95,7 @@ function updateDisplay() {
 ────────────────────────────────────── */
 function runStartup() {
   dispStart.classList.remove('hidden');
-  const msg = 'CASIO fx-82MS';
+  const msg = 'RUPAM fx-82MS';
   let i = 0;
   startText.textContent = '';
 
@@ -404,11 +409,13 @@ function calculate() {
     state.result = formatted;
     state.justEvaled = true;
     state.inError = false;
+    state.autoCloseCount = 0;
     updateDisplay();
   } catch (err) {
     state.result = err.message || 'Math ERROR';
     state.inError = true;
     state.justEvaled = true;
+    state.autoCloseCount = 0;
     updateDisplay();
     // Shake animation
     dispInner.classList.remove('shake');
@@ -421,13 +428,39 @@ function calculate() {
 /* ──────────────────────────────────────
    APPEND TO EXPRESSION
 ────────────────────────────────────── */
-function appendExpr(str) {
+function getAutoCloseInsertIndex() {
+  if (state.autoCloseCount <= 0) return state.expression.length;
+
+  let idx = state.expression.length;
+  let remaining = state.autoCloseCount;
+  while (remaining > 0 && state.expression[idx - 1] === ')') {
+    idx--;
+    remaining--;
+  }
+
+  if (remaining > 0) {
+    state.autoCloseCount -= remaining;
+    return state.expression.length;
+  }
+
+  return idx;
+}
+
+function insertExprText(str) {
+  const idx = getAutoCloseInsertIndex();
+  state.expression = state.expression.slice(0, idx) + str + state.expression.slice(idx);
+  state.result = state.expression || '0';
+}
+
+function appendExpr(str, autoCloseCount = 0) {
   if (state.justEvaled) {
     // If user types a digit right after =, start fresh
     if (/^\d/.test(str)) {
       state.expression = str;
+      state.autoCloseCount = autoCloseCount;
     } else if (str === '.' ) {
       state.expression = '0.';
+      state.autoCloseCount = autoCloseCount;
     } else {
       // operator after result: use result as base
       if (!state.inError) {
@@ -435,11 +468,13 @@ function appendExpr(str) {
       } else {
         state.expression = str;
       }
+      state.autoCloseCount = autoCloseCount;
     }
     state.justEvaled = false;
     state.inError = false;
   } else {
-    state.expression += str;
+    insertExprText(str);
+    state.autoCloseCount += autoCloseCount;
   }
   state.result = state.expression;
   updateDisplay();
@@ -509,14 +544,15 @@ function handlePrimaryAction(action, el) {
         state.result = v;
         state.justEvaled = false;
         state.inError = false;
+        state.autoCloseCount = 0;
       } else if (state.inError) {
         state.expression = v;
         state.result = v;
         state.justEvaled = false;
         state.inError = false;
+        state.autoCloseCount = 0;
       } else {
-        state.expression += v;
-        state.result = state.expression;
+        insertExprText(v);
       }
       updateDisplay();
       break;
@@ -527,8 +563,9 @@ function handlePrimaryAction(action, el) {
         state.expression = '0.';
         state.justEvaled = false;
         state.inError = false;
+        state.autoCloseCount = 0;
       } else if (!state.expression.includes('.')) {
-        state.expression += state.expression ? '.' : '0.';
+        insertExprText(state.expression ? '.' : '0.');
       }
       state.result = state.expression;
       updateDisplay();
@@ -541,8 +578,9 @@ function handlePrimaryAction(action, el) {
       if (state.justEvaled) {
         state.expression = formatResult(state.ans) + op;
         state.justEvaled = false;
+        state.autoCloseCount = 0;
       } else {
-        state.expression += op;
+        insertExprText(op);
       }
       state.result = state.expression;
       updateDisplay();
@@ -561,6 +599,7 @@ function handlePrimaryAction(action, el) {
         state.result = '0';
         state.justEvaled = false;
         state.inError = false;
+        state.autoCloseCount = 0;
         runStartup();
         return;
       }
@@ -568,12 +607,23 @@ function handlePrimaryAction(action, el) {
       state.result = '0';
       state.justEvaled = false;
       state.inError = false;
+      state.autoCloseCount = 0;
       updateDisplay();
       break;
 
     case 'del':
       if (state.justEvaled || state.inError) break;
-      state.expression = state.expression.slice(0, -1);
+      if (state.autoCloseCount > 0) {
+        const idx = getAutoCloseInsertIndex();
+        if (idx > 0 && state.expression[idx - 1] === '(' && state.expression[idx] === ')') {
+          state.expression = state.expression.slice(0, idx - 1) + state.expression.slice(idx + 1);
+          state.autoCloseCount--;
+        } else if (idx > 0) {
+          state.expression = state.expression.slice(0, idx - 1) + state.expression.slice(idx);
+        }
+      } else {
+        state.expression = state.expression.slice(0, -1);
+      }
       if (!state.expression) state.result = '0';
       else state.result = state.expression;
       updateDisplay();
@@ -584,6 +634,12 @@ function handlePrimaryAction(action, el) {
       break;
 
     case 'closeParen':
+      if (state.autoCloseCount > 0 && state.expression.endsWith(')')) {
+        state.autoCloseCount--;
+        state.result = state.expression;
+        updateDisplay();
+        break;
+      }
       appendExpr(')');
       break;
 
@@ -592,33 +648,33 @@ function handlePrimaryAction(action, el) {
       break;
 
     case 'sin':
-      appendExpr('sin(');
+      appendExpr('sin()', 1);
       break;
     case 'cos':
-      appendExpr('cos(');
+      appendExpr('cos()', 1);
       break;
     case 'tan':
-      appendExpr('tan(');
+      appendExpr('tan()', 1);
       break;
 
     case 'log':
-      appendExpr('log(');
+      appendExpr('log()', 1);
       break;
     case 'ln':
-      appendExpr('ln(');
+      appendExpr('ln()', 1);
       break;
 
     case 'sqrt':
-      appendExpr('√(');
+      appendExpr('√()', 1);
       break;
 
     case 'sq': {
       if (state.expression && !state.justEvaled) {
-        state.expression += '^2';
-        state.result = state.expression;
+        insertExprText('^2');
       } else if (state.justEvaled) {
         state.expression = formatResult(state.ans) + '^2';
         state.justEvaled = false;
+        state.autoCloseCount = 0;
       }
       updateDisplay();
       break;
@@ -633,8 +689,9 @@ function handlePrimaryAction(action, el) {
       if (state.justEvaled) {
         state.expression = formatResult(state.ans) + '^(-1)';
         state.justEvaled = false;
+        state.autoCloseCount = 0;
       } else if (state.expression) {
-        state.expression += '^(-1)';
+        insertExprText('^(-1)');
       }
       state.result = state.expression;
       updateDisplay();
@@ -697,6 +754,7 @@ function handlePrimaryAction(action, el) {
       state.result = state.expression;
       state.justEvaled = false;
       state.inError = false;
+      state.autoCloseCount = 0;
       updateDisplay();
       break;
     }
@@ -713,6 +771,7 @@ function handlePrimaryAction(action, el) {
       }
       state.justEvaled = false;
       state.inError = false;
+      state.autoCloseCount = 0;
       updateDisplay();
       break;
     }
@@ -786,16 +845,19 @@ function getAlphaAction(action, el) {
 
 function handleAction(action, el) { // eslint-disable-line no-redeclare
   switch (action) {
-    case 'asin': appendExpr('sin⁻¹('); break;
-    case 'acos': appendExpr('cos⁻¹('); break;
-    case 'atan': appendExpr('tan⁻¹('); break;
-    case 'pow10': appendExpr('10^('); break;
-    case 'exp': appendExpr('exp('); break;
-    case 'cbrt': appendExpr('∛('); break;
+    case 'asin': appendExpr('sin⁻¹()', 1); break;
+    case 'acos': appendExpr('cos⁻¹()', 1); break;
+    case 'atan': appendExpr('tan⁻¹()', 1); break;
+    case 'pow10': appendExpr('10^()', 1); break;
+    case 'exp': appendExpr('exp()', 1); break;
+    case 'cbrt': appendExpr('∛()', 1); break;
     case 'cube': {
-      if (state.expression) state.expression += '^3';
-      else state.expression = 'Ans^3';
-      state.result = state.expression;
+      if (state.expression) insertExprText('^3');
+      else {
+        state.expression = 'Ans^3';
+        state.result = state.expression;
+        state.autoCloseCount = 0;
+      }
       updateDisplay();
       break;
     }
@@ -820,7 +882,7 @@ function handleAction(action, el) { // eslint-disable-line no-redeclare
       }
       break;
     }
-    case 'abs': appendExpr('Abs('); break;
+    case 'abs': appendExpr('Abs()', 1); break;
     case 'off': {
       state.isOff = true;
       dispExpr.textContent = '';
@@ -856,9 +918,9 @@ function handleAction(action, el) { // eslint-disable-line no-redeclare
         state.expression = formatResult(state.memory);
         state.result = state.expression;
         state.justEvaled = false;
+        state.autoCloseCount = 0;
       } else {
-        state.expression += formatResult(state.memory);
-        state.result = state.expression;
+        insertExprText(formatResult(state.memory));
       }
       updateDisplay();
       break;
